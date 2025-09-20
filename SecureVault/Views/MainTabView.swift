@@ -8,21 +8,23 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @EnvironmentObject var localizationManager: LocalizationManager
+    
     var body: some View {
         TabView {
             PasswordListView()
                 .tabItem {
-                    Label("Пароли", systemImage: "key.fill")
+                    Label(localized(.passwords), systemImage: "key.fill")
                 }
             
             GeneratorView()
                 .tabItem {
-                    Label("Генератор", systemImage: "wand.and.stars")
+                    Label(localized(.generator), systemImage: "wand.and.stars")
                 }
             
             SettingsView()
                 .tabItem {
-                    Label("Настройки", systemImage: "gear")
+                    Label(localized(.settings), systemImage: "gear")
                 }
         }
     }

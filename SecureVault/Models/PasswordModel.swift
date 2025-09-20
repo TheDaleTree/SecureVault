@@ -60,15 +60,17 @@ enum PasswordCategory: String, CaseIterable, Codable {
     case other = "other"
     
     var displayName: String {
+        let key: LocalizationKey
         switch self {
-        case .personal: return "Личное"
-        case .work: return "Работа"
-        case .finance: return "Финансы"
-        case .social: return "Соцсети"
-        case .entertainment: return "Развлечения"
-        case .shopping: return "Покупки"
-        case .other: return "Другое"
+        case .personal: key = .personal
+        case .work: key = .work
+        case .finance: key = .finance
+        case .social: key = .social
+        case .entertainment: key = .entertainment
+        case .shopping: key = .shopping
+        case .other: key = .other
         }
+        return LocalizationManager.shared.string(for: key)
     }
     
     var systemImage: String {

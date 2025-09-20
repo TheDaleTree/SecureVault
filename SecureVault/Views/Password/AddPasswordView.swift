@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddPasswordView: View {
     @EnvironmentObject var dataStore: DataStore
+    @EnvironmentObject var localizationManager: LocalizationManager
     @Environment(\.dismiss) private var dismiss
     
     @State private var title = ""
@@ -23,18 +24,18 @@ struct AddPasswordView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section("Основная информация") {
-                    TextField("Название", text: $title)
+                Section(localized(.mainInfo)) {
+                    TextField(localized(.title), text: $title)
                     
-                    TextField("Имя пользователя", text: $username)
+                    TextField(localized(.username), text: $username)
                         .autocapitalization(.none)
                     
                     HStack {
                         if showPassword {
-                            TextField("Пароль", text: $password)
+                            TextField(localized(.password), text: $password)
                                 .autocapitalization(.none)
                         } else {
-                            SecureField("Пароль", text: $password)
+                            SecureField(localized(.password), text: $password)
                         }
                         
                         Button(action: { showPassword.toggle() }) {
@@ -49,31 +50,31 @@ struct AddPasswordView: View {
                     }
                 }
                 
-                Section("Дополнительно") {
-                    TextField("Веб-сайт", text: $website)
+                Section(localized(.additionalInfo)) {
+                    TextField(localized(.website), text: $website)
                         .autocapitalization(.none)
                         .keyboardType(.URL)
                     
-                    Picker("Категория", selection: $selectedCategory) {
+                    Picker(localized(.category), selection: $selectedCategory) {
                         ForEach(PasswordCategory.allCases, id: \.self) { category in
                             Label(category.displayName, systemImage: category.systemImage)
                                 .tag(category)
                         }
                     }
                     
-                    TextField("Заметки", text: $notes, axis: .vertical)
+                    TextField(localized(.notes), text: $notes, axis: .vertical)
                         .lineLimit(3...6)
                 }
             }
-            .navigationTitle("Новый пароль")
+            .navigationTitle(localized(.newPassword))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отмена") { dismiss() }
+                    Button(localized(.cancel)) { dismiss() }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
+                    Button(localized(.save)) {
                         savePassword()
                     }
                     .disabled(title.isEmpty || password.isEmpty)
