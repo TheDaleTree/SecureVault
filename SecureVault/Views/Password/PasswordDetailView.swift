@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PasswordDetailView: View {
     let password: PasswordModel
+    @EnvironmentObject var localizationManager: LocalizationManager
     @Environment(\.dismiss) private var dismiss
     @State private var showPassword = false
     @State private var decryptedPassword = ""
@@ -37,7 +38,7 @@ struct PasswordDetailView: View {
                     VStack(spacing: 16) {
                         if !password.username.isEmpty {
                             DetailField(
-                                title: "Имя пользователя",
+                                title: localized(.username),
                                 value: password.username,
                                 systemImage: "person.fill"
                             ) {
@@ -46,7 +47,7 @@ struct PasswordDetailView: View {
                         }
                         
                         DetailField(
-                            title: "Пароль",
+                            title: localized(.password),
                             value: showPassword ? decryptedPassword : "••••••••",
                             systemImage: "lock.fill",
                             trailing: {
@@ -61,7 +62,7 @@ struct PasswordDetailView: View {
                         
                         if !password.website.isEmpty {
                             DetailField(
-                                title: "Веб-сайт",
+                                title: localized(.website),
                                 value: password.website,
                                 systemImage: "globe"
                             ) {
@@ -71,7 +72,7 @@ struct PasswordDetailView: View {
                         
                         if !password.notes.isEmpty {
                             DetailField(
-                                title: "Заметки",
+                                title: localized(.notes),
                                 value: password.notes,
                                 systemImage: "note.text"
                             ) {
@@ -83,11 +84,11 @@ struct PasswordDetailView: View {
                     
                     // Dates
                     VStack(alignment: .leading, spacing: 8) {
-                        Label("Создан: \(password.createdAt.formatted())", systemImage: "calendar")
+                        Label("\(localized(.created)): \(password.createdAt.formatted())", systemImage: "calendar")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         
-                        Label("Изменён: \(password.updatedAt.formatted())", systemImage: "clock")
+                        Label("\(localized(.updated)): \(password.updatedAt.formatted())", systemImage: "clock")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -98,11 +99,11 @@ struct PasswordDetailView: View {
                     .padding(.horizontal)
                 }
             }
-            .navigationTitle("Детали")
+            .navigationTitle(localized(.details))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Готово") { dismiss() }
+                    Button(localized(.done)) { dismiss() }
                 }
             }
         }
@@ -111,7 +112,7 @@ struct PasswordDetailView: View {
         }
         .overlay(alignment: .top) {
             if copied {
-                Text("Скопировано!")
+                Text(localized(.copied))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(Color.green)
@@ -146,6 +147,7 @@ struct PasswordDetailView: View {
 }
 
 struct DetailField<Trailing: View>: View {
+    @EnvironmentObject var localizationManager: LocalizationManager
     let title: String
     let value: String
     let systemImage: String

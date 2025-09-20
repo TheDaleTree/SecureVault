@@ -10,6 +10,7 @@ import LocalAuthentication
 
 struct LoginView: View {
     @Binding var isLocked: Bool
+    @EnvironmentObject var localizationManager: LocalizationManager
     @State private var password = ""
     @State private var showError = false
     @State private var errorMessage = ""
@@ -23,11 +24,11 @@ struct LoginView: View {
                 .font(.system(size: 80))
                 .foregroundColor(.blue)
             
-            Text("SecureVault")
+            Text(localized(.appName))
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("Ваши пароли под защитой")
+            Text(localized(.appDescription))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -36,7 +37,7 @@ struct LoginView: View {
             // Buttons
             VStack(spacing: 20) {
                 Button(action: authenticateWithBiometrics) {
-                    Label("Войти с Face ID", systemImage: "faceid")
+                    Label(localized(.enterWithFaceID), systemImage: "faceid")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.blue)
@@ -45,7 +46,7 @@ struct LoginView: View {
                 }
                 
                 Button(action: authenticateWithPassword) {
-                    Label("Использовать пароль", systemImage: "key.fill")
+                    Label(localized(.usePassword), systemImage: "key.fill")
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.gray.opacity(0.2))
@@ -57,8 +58,8 @@ struct LoginView: View {
             
             Spacer()
         }
-        .alert("Ошибка", isPresented: $showError) {
-            Button("OK", role: .cancel) { }
+        .alert(localized(.error), isPresented: $showError) {
+            Button(localized(.ok), role: .cancel) { }
         } message: {
             Text(errorMessage)
         }
@@ -69,27 +70,27 @@ struct LoginView: View {
         var error: NSError?
         
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Войдите для доступа к паролям") { success, error in
+            let reason = localized(.appDescription)
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, error in
                 DispatchQueue.main.async {
                     if success {
                         withAnimation {
                             isLocked = false
                         }
                     } else {
-                        errorMessage = "Не удалось выполнить аутентификацию"
+                        errorMessage = localized(.authenticationFailed)
                         showError = true
                     }
                 }
             }
         } else {
-            errorMessage = "Face ID недоступен"
+            errorMessage = localized(.authenticationError)
             showError = true
         }
     }
     
     private func authenticateWithPassword() {
         // Для демонстрации просто разблокируем
-        // В реальном приложении здесь должна быть проверка мастер-пароля
         withAnimation {
             isLocked = false
         }

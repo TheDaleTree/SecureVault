@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GeneratorView: View {
+    @EnvironmentObject var localizationManager: LocalizationManager
     @State private var generatedPassword = ""
     @State private var passwordLength: Double = 16
     @State private var includeUppercase = true
@@ -23,7 +24,7 @@ struct GeneratorView: View {
                 VStack(spacing: 20) {
                     // Generated Password Display
                     VStack(spacing: 16) {
-                        Text(generatedPassword.isEmpty ? "Нажмите 'Сгенерировать'" : generatedPassword)
+                        Text(generatedPassword.isEmpty ? localized(.clickToGenerate) : generatedPassword)
                             .font(.system(.title3, design: .monospaced))
                             .multilineTextAlignment(.center)
                             .padding()
@@ -34,13 +35,13 @@ struct GeneratorView: View {
                         if !generatedPassword.isEmpty {
                             HStack(spacing: 12) {
                                 Button(action: copyPassword) {
-                                    Label("Копировать", systemImage: "doc.on.doc")
+                                    Label(localized(.copy), systemImage: "doc.on.doc")
                                         .frame(maxWidth: .infinity)
                                 }
                                 .buttonStyle(.borderedProminent)
                                 
                                 Button(action: generatePassword) {
-                                    Label("Обновить", systemImage: "arrow.clockwise")
+                                    Label(localized(.refresh), systemImage: "arrow.clockwise")
                                         .frame(maxWidth: .infinity)
                                 }
                                 .buttonStyle(.bordered)
@@ -51,19 +52,19 @@ struct GeneratorView: View {
                     
                     // Options
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Настройки")
+                        Text(localized(.generatorSettings))
                             .font(.headline)
                         
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Длина: \(Int(passwordLength))")
+                            Text("\(localized(.passwordLength)): \(Int(passwordLength))")
                             Slider(value: $passwordLength, in: 8...32, step: 1)
                         }
                         
-                        Toggle("Заглавные буквы (A-Z)", isOn: $includeUppercase)
-                        Toggle("Строчные буквы (a-z)", isOn: $includeLowercase)
-                        Toggle("Цифры (0-9)", isOn: $includeNumbers)
-                        Toggle("Символы (!@#$...)", isOn: $includeSymbols)
-                        Toggle("Исключить похожие (0, O, l, I)", isOn: $excludeAmbiguous)
+                        Toggle(localized(.uppercaseLetters), isOn: $includeUppercase)
+                        Toggle(localized(.lowercaseLetters), isOn: $includeLowercase)
+                        Toggle(localized(.numbers), isOn: $includeNumbers)
+                        Toggle(localized(.symbols), isOn: $includeSymbols)
+                        Toggle(localized(.excludeSimilar), isOn: $excludeAmbiguous)
                     }
                     .padding()
                     .background(Color.gray.opacity(0.1))
@@ -72,7 +73,7 @@ struct GeneratorView: View {
                     
                     // Generate Button
                     Button(action: generatePassword) {
-                        Text("Сгенерировать пароль")
+                        Text(localized(.generatePassword))
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
@@ -80,14 +81,14 @@ struct GeneratorView: View {
                     .padding(.horizontal)
                 }
             }
-            .navigationTitle("Генератор")
+            .navigationTitle(localized(.generator))
             .onAppear {
                 generatePassword()
             }
         }
         .overlay(alignment: .top) {
             if copied {
-                Text("Скопировано!")
+                Text(localized(.copied))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
                     .background(Color.green)
@@ -129,6 +130,7 @@ struct GeneratorView: View {
 
 struct GeneratorSheet: View {
     @Binding var generatedPassword: String
+    @EnvironmentObject var localizationManager: LocalizationManager
     @Environment(\.dismiss) private var dismiss
     @State private var localPassword = ""
     @State private var passwordLength: Double = 16
@@ -136,7 +138,7 @@ struct GeneratorSheet: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
-                Text(localPassword.isEmpty ? "Сгенерируйте пароль" : localPassword)
+                Text(localPassword.isEmpty ? localized(.clickToGenerate) : localPassword)
                     .font(.system(.title3, design: .monospaced))
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -145,20 +147,20 @@ struct GeneratorSheet: View {
                     .padding()
                 
                 VStack(alignment: .leading) {
-                    Text("Длина: \(Int(passwordLength))")
+                    Text("\(localized(.passwordLength)): \(Int(passwordLength))")
                     Slider(value: $passwordLength, in: 8...32, step: 1)
                 }
                 .padding()
                 
                 HStack(spacing: 12) {
-                    Button("Сгенерировать") {
+                    Button(localized(.generate)) {
                         localPassword = PasswordGenerator.generate(
                             with: PasswordGenerator.Options(length: Int(passwordLength))
                         )
                     }
                     .buttonStyle(.borderedProminent)
                     
-                    Button("Использовать") {
+                    Button(localized(.use)) {
                         generatedPassword = localPassword
                         dismiss()
                     }
@@ -168,11 +170,11 @@ struct GeneratorSheet: View {
                 
                 Spacer()
             }
-            .navigationTitle("Генератор")
+            .navigationTitle(localized(.generator))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отмена") { dismiss() }
+                    Button(localized(.cancel)) { dismiss() }
                 }
             }
             .onAppear {

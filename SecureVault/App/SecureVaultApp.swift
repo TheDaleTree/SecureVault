@@ -10,19 +10,21 @@ import SwiftUI
 @main
 struct SecureVaultApp: App {
     @StateObject private var dataStore = DataStore.shared
-    @State private var isLocked = true
+    @StateObject private var localizationManager = LocalizationManager.shared
     
     var body: some Scene {
         WindowGroup {
-            RootView(isLocked: $isLocked)
+            ContentView()
                 .environmentObject(dataStore)
+                .environmentObject(localizationManager)
         }
     }
 }
 
-struct RootView: View {
-    @Binding var isLocked: Bool
+struct ContentView: View {
     @EnvironmentObject var dataStore: DataStore
+    @EnvironmentObject var localizationManager: LocalizationManager
+    @State private var isLocked = true
     
     var body: some View {
         if isLocked {
